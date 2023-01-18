@@ -1,0 +1,21 @@
+FROM gradle:7.4.2-jdk17-alpine as builder
+
+WORKDIR /jarBuildDir
+COPY ./src /jarBuildDir/src
+COPY ./build.gradle /jarBuildDir
+RUN gradle build
+
+FROM eclipse-temurin:17.0.4.1_1-jre-alpine
+COPY --from=builder /jarBuildDir/build/libs/jarBuildDir-0.0.1-SNAPSHOT.jar .
+EXPOSE 8080
+ENV USER_NAME=root
+ENV P6D=mypw
+ENV PORT=3306
+ENV DATABASE=Demo2
+ENV IP=database
+ENTRYPOINT java -jar jarBuildDir-0.0.1-SNAPSHOT.jar \
+            --env.username=${USER_NAME} \
+            --env.password=${P6D} \
+            --env.ip=${IP} \
+            --env.port=${PORT} \
+            --env.database-name=${DATABASE} \

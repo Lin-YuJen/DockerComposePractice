@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    password: ${env.password}
+    username: ${env.username}
+    url: jdbc:mysql://${env.ip}:${env.port}/${env.database-name}
+env:
+  password: ''
+  username: ''
+  ip: ''
+  port: 3306
+  database-name: ''
+
+logging:
+  file:
+    name: test.log
+  level:
+    org.springframework.web: DEBUG

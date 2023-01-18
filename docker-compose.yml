@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: dockerfile
+    image: count-bk:lastest
+    environment:
+      USER_NAME: ${mysql_user}
+      P6D: ${mysql_p6d}
+      DATABASE: ${mysql_database}
+      IP: ${mysql_url}
+      PORT: ${mysql_port}
+    depends_on:
+      database:
+        condition: service_healthy
+#    ports:
+#      - 8080:8080
+    networks:
+      - backend-tier
+      - frontend-tier
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: dockerfile
+    image: count-fn:latest
+    ports:
+      - 8081:80
+    depends_on:
+      - backend
+    networks:
+      - frontend-tier
+
+  database:
+    build:
+      context: ./database
+      dockerfile: dockerfile
+    image: demo_mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: ${mysql_p6d}
+      MYSQL_DATABASE: ${mysql_database}
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 20s
+      retries: 3
+    ports:
+      - 33060:3306
+    networks:
+      backend-tier:
+
+volumes:
+  mysql-data:
+
+networks:
+  backend-tier:
+  frontend-tier:

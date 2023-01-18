@@ -1,0 +1,22 @@
+<h2>Count</h2>
+<body>
+    Current is <span id="count">0</span>
+    <br>
+    <button id="btn" onclick="getCount()">Click</button>
+    <br>
+    API response is <br>
+    <span id="rep"></span>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    let countDom = document.getElementById("count")
+    let responseDom = document.getElementById("rep")
+
+    function getCount() {
+        axios.get("api/count/get").then(response => {
+            countDom.textContent = response.data['count'].toString()
+            responseDom.textContent = JSON.stringify(response.data)
+        })
+    }
+</script>
